@@ -11,8 +11,9 @@ def reform_raw_text(tokens):
     text = ' '.join(tokens)
     return text.replace("_", " ")
 
-def label(x):
-  return [id_tag[int(i)] for i in x]
+def label(x, ):
+    id_tag = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
+    return [id_tag[int(i)] for i in x]
 
 def replace_7_8(lst):
     return [0 if x in (7, 8) else x for x in lst]
@@ -77,7 +78,7 @@ def load_phoBERT_model_and_tokenizer():
 
 
 # Embedding text
-def add_embeddings_feature(df, model, tokenizer):
+def create_embeddings(df, model, tokenizer):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -119,12 +120,11 @@ def add_embeddings_feature(df, model, tokenizer):
         all_embeddings.append(torch.stack(word_embeds))
         all_labels.append(torch.tensor(gold_labels))
     
-    # Remove skipped row
-    df = df.drop(remove_index)
-    
-    # Add embeddings and id_labels with tensor type
-    df["embeddings"] = all_embeddings
-    df["id_labels"] = all_labels
+        # Create Dict
+        processed_data = {
+          "embeddings": all_embeddings,
+          "labels": all_labels
+        }
 
-    return df
+    return processed_data
 

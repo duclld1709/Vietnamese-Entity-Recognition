@@ -15,9 +15,10 @@ def main():
     # Init PhoBERT Tokenizer and PhoBERT Model
     model, tokenizer = load_phoBERT_model_and_tokenizer()
 
-    # Add feature embedding vectors
-    df = add_embeddings_feature(df, model, tokenizer)
-    df.to_csv(r".\data\processed_data_full.csv", index=False)
+    # Embeddings data
+    df = create_embeddings(df, model, tokenizer)
+    processed_data = create_embeddings(df, model, tokenizer)
+    torch.save(processed_data, r".\data\processed_data_full.pt")
 
 
 if __name__ == "__main__":
