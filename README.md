@@ -25,9 +25,9 @@ conda activate vnner
 my_ai_project/
 │
 ├── data/                  
-│   ├── raw/               # Dữ liệu gốc
-│   ├── processed/         # Dữ liệu sau khi tiền xử lý
-│   └── external/          # Dữ liệu từ nguồn bên ngoài (nếu có)
+│   ├── raw_data.csv               # Dữ liệu gốc
+│   ├── processed_data_EDA.csv     # Dữ liệu sau khi tiền xử lý
+│   └── processed_data_full.csv    # Dữ liệu sẵn sàng training
 │
 ├── notebooks/                      # Thử nghiệm và khám phá dữ liệu
 │   ├── Duc_Notebook.ipynb          # CRF + RandomForest
