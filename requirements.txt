@@ -3,11 +3,8 @@ pandas
 torch
 transformers
 tqdm
-sklearn
+scikit-learn
 wandb
-os
 numpy
 lightgbm
-json
-tempfile
 streamlit
