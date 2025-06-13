@@ -16,7 +16,6 @@ def main():
     model, tokenizer = load_phoBERT_model_and_tokenizer()
 
     # Embeddings data
-    df = create_embeddings(df, model, tokenizer)
     processed_data = create_embeddings(df, model, tokenizer)
     torch.save(processed_data, r".\data\processed_data_full.pt")
 
