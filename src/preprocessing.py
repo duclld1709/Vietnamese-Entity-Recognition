@@ -2,6 +2,8 @@ import pandas as pd
 import torch
 from transformers import AutoTokenizer, AutoModel
 from tqdm import tqdm
+from sklearn.model_selection import train_test_split
+from src.configs import configs
 
 def join_tokens(tokens):
     text = ' '.join(tokens)
@@ -85,13 +87,8 @@ def create_embeddings(df, model, tokenizer):
     all_embeddings = []  # list of [seq_len_i, 768] tensors
     all_labels = [] # list of [seq_len_i,] tensors
     remove_index = []
-    # count = 0
 
     for i, row in tqdm(df.iterrows(), total=len(df)):
-
-        # count += 1
-        # if count == 500:
-        #   break
 
         # Truy cập phần tử từng dòng
         sentence = row['seg_text']
@@ -112,7 +109,7 @@ def create_embeddings(df, model, tokenizer):
 
         # Kiểm tra số lượng embeddings và số lượng labels, nếu conflict -> xóa dòng đó
         if len(word_embeds) != len(gold_labels):
-            print(f"Warning: Skip row {i} - length mismatch")
+            # print(f"Warning: Skip row {i} - length mismatch")
             remove_index.append(i)
             continue
 
@@ -128,3 +125,14 @@ def create_embeddings(df, model, tokenizer):
 
     return processed_data
 
+
+def split_dataset(data):
+
+    # Train_Val / Test Split
+    X_train_val, X_test, Y_train_val, Y_test = train_test_split(data["embeddings"], data["labels"], test_size=configs["test_ratio"], random_state=42)
+
+    # Train / Val Split
+    val_rest_ratio = configs["val_ratio"] / (configs["val_ratio"] + configs["train_ratio"])
+    X_train, X_val, Y_train, Y_val = train_test_split(X_train_val, Y_train_val, test_size = val_rest_ratio, random_state=42)
+
+    return X_train, Y_train, X_val, Y_val, X_test, Y_test
