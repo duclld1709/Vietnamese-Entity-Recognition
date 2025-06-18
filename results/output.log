@@ -1,0 +1,88 @@
+Train Epoch 1/20: 100%|██████████| 736/736 [00:22<00:00, 32.46it/s, avg_loss=2.69, batch_loss=0.947]
+Epoch 1: train_loss=2.6912, train_f1=0.8224, val_loss=1.0848, val_f1=0.8273
+Saved imporved model to ./models/best_epoch_1.pt
+Train Epoch 2/20: 100%|██████████| 736/736 [00:21<00:00, 33.55it/s, avg_loss=0.806, batch_loss=0.998] 
+
+Epoch 2: train_loss=0.8061, train_f1=0.8674, val_loss=0.7191, val_f1=0.8613
+Saved imporved model to ./models/best_epoch_2.pt
+Train Epoch 3/20: 100%|██████████| 736/736 [00:22<00:00, 32.59it/s, avg_loss=0.584, batch_loss=0.0527]
+
+Epoch 3: train_loss=0.5842, train_f1=0.8996, val_loss=0.5643, val_f1=0.8895
+Saved imporved model to ./models/best_epoch_3.pt
+Train Epoch 4/20: 100%|██████████| 736/736 [00:23<00:00, 31.34it/s, avg_loss=0.478, batch_loss=1.06]  
+
+Epoch 4: train_loss=0.4782, train_f1=0.9122, val_loss=0.4838, val_f1=0.8994
+Saved imporved model to ./models/best_epoch_4.pt
+Train Epoch 5/20: 100%|██████████| 736/736 [00:22<00:00, 32.59it/s, avg_loss=0.406, batch_loss=0.421] 
+
+Epoch 5: train_loss=0.4056, train_f1=0.9254, val_loss=0.4281, val_f1=0.9101
+Saved imporved model to ./models/best_epoch_5.pt
+Train Epoch 6/20: 100%|██████████| 736/736 [00:21<00:00, 34.15it/s, avg_loss=0.36, batch_loss=1.01]   
+
+Epoch 6: train_loss=0.3599, train_f1=0.9343, val_loss=0.3934, val_f1=0.9190
+Saved imporved model to ./models/best_epoch_6.pt
+Train Epoch 7/20: 100%|██████████| 736/736 [00:22<00:00, 33.08it/s, avg_loss=0.322, batch_loss=0.392] 
+
+Epoch 7: train_loss=0.3218, train_f1=0.9383, val_loss=0.3751, val_f1=0.9192
+Saved imporved model to ./models/best_epoch_7.pt
+Train Epoch 8/20: 100%|██████████| 736/736 [00:22<00:00, 32.66it/s, avg_loss=0.294, batch_loss=0.468]  
+
+Epoch 8: train_loss=0.2942, train_f1=0.9424, val_loss=0.3560, val_f1=0.9189
+Train Epoch 9/20: 100%|██████████| 736/736 [00:23<00:00, 31.68it/s, avg_loss=0.27, batch_loss=0.681]   
+
+Epoch 9: train_loss=0.2699, train_f1=0.9429, val_loss=0.3521, val_f1=0.9177
+Train Epoch 10/20: 100%|██████████| 736/736 [00:21<00:00, 33.46it/s, avg_loss=0.252, batch_loss=0.525] 
+
+Epoch 10: train_loss=0.2517, train_f1=0.9493, val_loss=0.3413, val_f1=0.9222
+Saved imporved model to ./models/best_epoch_10.pt
+Train Epoch 11/20: 100%|██████████| 736/736 [00:22<00:00, 32.92it/s, avg_loss=0.238, batch_loss=0.022]  
+
+Epoch 11: train_loss=0.2383, train_f1=0.9551, val_loss=0.3292, val_f1=0.9232
+Saved imporved model to ./models/best_epoch_11.pt
+Train Epoch 12/20: 100%|██████████| 736/736 [00:23<00:00, 31.72it/s, avg_loss=0.222, batch_loss=0.529]  
+
+Epoch 12: train_loss=0.2223, train_f1=0.9543, val_loss=0.3305, val_f1=0.9207
+Train Epoch 13/20: 100%|██████████| 736/736 [00:23<00:00, 31.74it/s, avg_loss=0.213, batch_loss=0.381]  
+
+Epoch 13: train_loss=0.2127, train_f1=0.9593, val_loss=0.3244, val_f1=0.9221
+Train Epoch 14/20: 100%|██████████| 736/736 [00:23<00:00, 31.69it/s, avg_loss=0.203, batch_loss=0.279]  
+
+Epoch 14: train_loss=0.2026, train_f1=0.9609, val_loss=0.3213, val_f1=0.9224
+Train Epoch 15/20: 100%|██████████| 736/736 [00:23<00:00, 31.84it/s, avg_loss=0.193, batch_loss=0.0462] 
+
+Epoch 15: train_loss=0.1925, train_f1=0.9574, val_loss=0.3392, val_f1=0.9117
+Train Epoch 16/20: 100%|██████████| 736/736 [00:22<00:00, 32.11it/s, avg_loss=0.186, batch_loss=0.943]  
+
+Epoch 16: train_loss=0.1863, train_f1=0.9654, val_loss=0.3169, val_f1=0.9250
+Saved imporved model to ./models/best_epoch_16.pt
+Train Epoch 17/20: 100%|██████████| 736/736 [00:22<00:00, 32.38it/s, avg_loss=0.18, batch_loss=0.113]   
+
+Epoch 17: train_loss=0.1795, train_f1=0.9677, val_loss=0.3187, val_f1=0.9237
+Train Epoch 18/20: 100%|██████████| 736/736 [00:22<00:00, 33.30it/s, avg_loss=0.173, batch_loss=0.00558]
+
+Epoch 18: train_loss=0.1728, train_f1=0.9692, val_loss=0.3219, val_f1=0.9173
+Train Epoch 19/20: 100%|██████████| 736/736 [00:23<00:00, 31.48it/s, avg_loss=0.167, batch_loss=0.115]  
+
+Epoch 19: train_loss=0.1673, train_f1=0.9681, val_loss=0.3261, val_f1=0.9195
+Train Epoch 20/20: 100%|██████████| 736/736 [00:22<00:00, 32.17it/s, avg_loss=0.164, batch_loss=0.0463] 
+
+Epoch 20: train_loss=0.1640, train_f1=0.9715, val_loss=0.3230, val_f1=0.9185
+
+Loading best model from ./models/best_epoch_16.pt for final evaluation...
+Done
+
+Evaluation on test set ...
+Test_loss=0.2967, Test_f1=0.9087
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     51036
+           1       0.99      0.98      0.99      1112
+           2       0.97      0.99      0.98       506
+           3       0.86      0.79      0.82       180
+           4       0.84      0.80      0.82       291
+           5       0.89      0.91      0.90       939
+           6       0.87      0.84      0.86       428
+
+    accuracy                           0.99     54492
+   macro avg       0.92      0.90      0.91     54492
+weighted avg       0.99      0.99      0.99     54492

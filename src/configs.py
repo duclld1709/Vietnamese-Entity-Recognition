@@ -1,7 +1,7 @@
 configs = {   
     # Init
     "project": "NER",
-    "name": "CRF_VLSP2016_Test1706",
+    "name": "CRF_VLSP2016_Ultra",
     "model": "Linear/CRF",
 
     # Hyperparameters
