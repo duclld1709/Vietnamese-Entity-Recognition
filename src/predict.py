@@ -36,7 +36,7 @@ def predict_demo(text):
     NUM_TAGS = 7
 
     model = CRF_Tagger(input_dim=x.size(2), num_tags=NUM_TAGS)
-    model.load_state_dict(torch.load(".\models\best_epoch_16.pt"))
+    model.load_state_dict(torch.load("../models/best_epoch_16.pt"))
     model.eval()
     with torch.no_grad():
         preds = model.decode(x)
