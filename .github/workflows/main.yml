@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -22,8 +23,25 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git clone https://huggingface.co/spaces/DucLai/Vietnamese_NER space
+          
+          # Đồng bộ code vào repo Space (không copy .git)
           rsync -av --exclude '.git' ./ space/
+
+          # Xoá file binary ra khỏi Git index trước khi commit
           cd space
+          find . -type f \( \
+            -iname "*.png" -o \
+            -iname "*.jpg" -o \
+            -iname "*.jpeg" -o \
+            -iname "*.mp4" -o \
+            -iname "*.zip" -o \
+            -iname "*.pth" -o \
+            -iname "*.h5" -o \
+            -iname "*.tar.gz" -o \
+            -iname "*.wav" \
+          \) -exec git rm --cached {} \; || true
+
+          # Commit và push
           git add .
-          git commit -m "Auto-deploy from GitHub" || echo "No changes to commit"
+          git commit -m "Auto-deploy from GitHub (binary files removed)" || echo "No changes to commit"
           git push https://DucLai:${HF_TOKEN}@huggingface.co/spaces/DucLai/Vietnamese_NER HEAD
