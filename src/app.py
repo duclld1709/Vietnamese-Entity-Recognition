@@ -16,14 +16,27 @@ tab1, tab2, tab3 = st.tabs(["📊 Phân tích dữ liệu", "📈 Kết quả hu
 
 # --- Tab 1: PHÂN TÍCH DỮ LIỆU ---
 with tab1:
-    st.header("📊 Phân tích dữ liệu")
+    col1, col2 = st.columns(2)
 
-    df = pd.DataFrame({
-        "Loại thực thể": ["PER", "LOC", "ORG", "MISC"],
-        "Số lượng": [3200, 2500, 1800, 900]
-    })
-    
-    st.bar_chart(df.set_index("Loại thực thể"))
+    # ==== Distribution of NER Label Frequency ====
+    with col1:
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq.png")
+
+    # ==== Distribution of NER Label Frequency (Add crawled data) ====
+    with col2:
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq_add.png")
+
+    # ==== Distribution of the Number of Entities per Sentence (0 to 15+) ====
+    with col1:
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ent_dis.png")
+
+    # ==== Distribution of Sentence Lengths ====
+    with col2:
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/sent_len.png")
+
+    # ==== Distribution of Token Lengths ====
+    with col1:
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/token_len.png")
 
 # --- Tab 2: KẾT QUẢ HUẤN LUYỆN ---
 with tab2:
