@@ -1,6 +1,7 @@
 import torch
 from src.model import CRF_Tagger
 from src.preprocessing import process_demo_sentence
+import os
 
 def predict(model, loader, count_loss=True):
     
@@ -29,6 +30,9 @@ def predict(model, loader, count_loss=True):
 
 def predict_demo(text):
 
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    model_path = os.path.join(BASE_DIR, "models", "best_epoch_16.pt")
+
 
     id_tag = {0: 'O', 1: 'B-PER', 2: 'I-PER', 3: 'B-ORG', 4: 'I-ORG', 5: 'B-LOC', 6: 'I-LOC'}
 
@@ -36,7 +40,7 @@ def predict_demo(text):
     NUM_TAGS = 7
 
     model = CRF_Tagger(input_dim=x.size(2), num_tags=NUM_TAGS)
-    model.load_state_dict(torch.load("../models/best_epoch_16.pt"))
+    model.load_state_dict(torch.load(model_path))
     model.eval()
     with torch.no_grad():
         preds = model.decode(x)
