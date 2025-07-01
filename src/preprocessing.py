@@ -4,6 +4,7 @@ from transformers import AutoTokenizer, AutoModel
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 from src.configs import configs
+from pyvi import ViTokenizer
 
 def join_tokens(tokens):
     text = ' '.join(tokens)
@@ -136,3 +137,35 @@ def split_dataset(data):
     X_train, X_val, Y_train, Y_val = train_test_split(X_train_val, Y_train_val, test_size = val_rest_ratio, random_state=42)
 
     return X_train, Y_train, X_val, Y_val, X_test, Y_test
+
+
+# TODO: Refactor hàm process_demo_sentence, và hàm predict demo, warning nếu độ dài tokens_word không bằng độ dài sau group_embeddings
+
+def process_demo_sentence(text):
+    """
+    Trả về tensor shape 1 x Seq_length x 768
+    """
+    segmented_text = ViTokenizer.tokenize(text)
+    tokens_word = segmented_text.strip().split(" ")
+
+    model, tokenizer = load_phoBERT_model_and_tokenizer()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    input_ids = tokenizer.encode(segmented_text, return_tensors="pt").to(device)
+
+    tokens = tokenizer.convert_ids_to_tokens(input_ids[0].cpu())
+
+    with torch.no_grad():
+        outputs = model(input_ids)
+        last_hidden_state = outputs.last_hidden_state.squeeze(0).cpu()
+    
+    word_embeds = group_embeddings(tokens, last_hidden_state)
+
+    all_embeddings = torch.stack(word_embeds) # seq_length x 768
+
+    all_embeddings = all_embeddings.unsqueeze(0) # Thêm chiều batch size là 1 -> 1 x seq_length x 768
+
+    return all_embeddings, tokens_word
+

@@ -11,6 +11,6 @@ class CRF_Tagger(nn.Module):
         emissions = self.embed2tag(x)
         return -self.crf(emissions, labels, mask=mask, reduction="mean")
     
-    def decode(self, x, mask):
+    def decode(self, x, mask=None):
         emissions = self.embed2tag(x)
         return self.crf.decode(emissions, mask)
