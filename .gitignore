@@ -10,8 +10,6 @@ __pycache__/
 
 # Dataset and results folders
 data/
-results/
-outputs/
 logs/
 
 # Large files
