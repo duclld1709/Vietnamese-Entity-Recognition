@@ -26,4 +26,4 @@ jobs:
           cd space
           git add .
           git commit -m "Auto-deploy from GitHub" || echo "No changes to commit"
-          git push https://huggingface.co/DucLai:$HF_TOKEN@huggingface.co/spaces/DucLai/Vietnamese_NER HEAD
+          git push https://huggingface.co/DucLai$HF_TOKEN@huggingface.co/spaces/DucLai/Vietnamese_NER HEAD
