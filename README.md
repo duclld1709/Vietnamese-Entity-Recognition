@@ -1,3 +1,13 @@
+---
+title: Vietnamese NER Demo
+emoji: 🧠
+colorFrom: indigo
+colorTo: yellow
+sdk: streamlit
+sdk_version: 1.46.1
+app_file: src/app.py
+pinned: false
+---
 # Vietnamese Named Entity Recognition
 
 ## 🛠️ Set Up Your Environment With Conda
