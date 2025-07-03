@@ -3,7 +3,7 @@ import torch
 from transformers import AutoTokenizer, AutoModel
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
-from src.configs import configs
+from configs import configs
 from pyvi import ViTokenizer
 
 def join_tokens(tokens):
