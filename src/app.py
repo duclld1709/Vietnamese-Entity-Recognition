@@ -8,52 +8,57 @@ from results.output import training_log, report_dict, report_dict_2, model_compa
 
 st.set_page_config(page_title="Vietnamese NER", layout="wide")
 
-# ===== Tiêu đề chính =====
-st.title("🔍 Ứng dụng nhận diện thực thể có tên (NER) cho tiếng Việt")
+# ===== Main Title =====
+st.title("🔍 Vietnamese Named Entity Recognition (NER) Application")
 
 # Tabs
-tab1, tab2, tab3 = st.tabs(["📊 Phân tích dữ liệu", "📈 Kết quả huấn luyện", "🧪 Demo mô hình"])
+tab1, tab2, tab3 = st.tabs(["📊 Data Analysis", "📈 Training Results", "🧪 Model Demo"])
 
-# --- Tab 1: PHÂN TÍCH DỮ LIỆU ---
+# --- Tab 1: DATA ANALYSIS ---
 with tab1:
     col1, col2 = st.columns(2)
 
     # ==== Distribution of NER Label Frequency ====
     with col1:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq.png",
+                 caption="NER Label Frequency Distribution")
 
     # ==== Distribution of NER Label Frequency (Add crawled data) ====
     with col2:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq_add.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq_add.png",
+                 caption="NER Label Frequency (Extended with Crawled Data)")
 
     # ==== Distribution of the Number of Entities per Sentence (0 to 15+) ====
     with col1:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ent_dis.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ent_dis.png",
+                 caption="Number of Entities per Sentence")
 
     # ==== Distribution of Sentence Lengths ====
     with col2:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/sent_len.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/sent_len.png",
+                 caption="Sentence Length Distribution")
 
     # ==== Distribution of Token Lengths ====
     with col1:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/token_len.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/token_len.png",
+                 caption="Token Length Distribution")
 
-# --- Tab 2: KẾT QUẢ HUẤN LUYỆN ---
+# --- Tab 2: TRAINING RESULTS ---
 with tab2:
     st.set_page_config(
-        page_title="My NER App",
+        page_title="Vietnamese NER",
         layout="wide",
         initial_sidebar_state="expanded"
     )
 
-    # ==== TẠO FIGURES ====
+    # ==== CREATE FIGURES ====
 
     # 1️⃣ Loss
     fig_loss = go.Figure()
     fig_loss.add_trace(go.Scatter(x=training_log["epoch"], y=training_log["train_loss"],
-                                mode='lines+markers', name='Train Loss'))
+                                  mode='lines+markers', name='Train Loss'))
     fig_loss.add_trace(go.Scatter(x=training_log["epoch"], y=training_log["val_loss"],
-                                mode='lines+markers', name='Val Loss'))
+                                  mode='lines+markers', name='Validation Loss'))
     fig_loss.update_layout(title="Loss Curve", xaxis_title="Epoch", yaxis_title="Loss")
 
     # 2️⃣ F1-Score
@@ -61,7 +66,7 @@ with tab2:
     fig_f1.add_trace(go.Scatter(x=training_log["epoch"], y=training_log["train_f1"],
                                 mode='lines+markers', name='Train F1'))
     fig_f1.add_trace(go.Scatter(x=training_log["epoch"], y=training_log["val_f1"],
-                                mode='lines+markers', name='Val F1'))
+                                mode='lines+markers', name='Validation F1'))
     fig_f1.update_layout(title="F1-Score Curve", xaxis_title="Epoch", yaxis_title="F1-Score")
 
     # 3️⃣ Classification Report Table & Bar
@@ -70,34 +75,34 @@ with tab2:
                     report_dict[lbl]["precision"],
                     report_dict[lbl]["recall"],
                     report_dict[lbl]["f1-score"]]
-                for lbl in labels]
+                   for lbl in labels]
     df_report = pd.DataFrame(report_data,
-                            columns=["Label", "Precision", "Recall", "F1-Score"])
+                             columns=["Label", "Precision", "Recall", "F1-Score"])
 
     fig_report = go.Figure()
     for col in ["Precision", "Recall", "F1-Score"]:
         fig_report.add_trace(go.Bar(x=df_report["Label"], y=df_report[col], name=col))
     fig_report.update_layout(barmode='group',
-                            title="Class Report Metrics of PhoBert + CRF",
-                            xaxis_title="Label", yaxis_title="Score",
-                            yaxis=dict(range=[0,1.0]))
+                             title="Class Metrics: PhoBERT + CRF",
+                             xaxis_title="Label", yaxis_title="Score",
+                             yaxis=dict(range=[0, 1.0]))
 
     labels2 = [k for k in report_dict_2.keys() if k not in ["accuracy", "macro avg", "weighted avg"]]
     report_data2 = [[lbl,
-                    report_dict_2[lbl]["precision"],
-                    report_dict_2[lbl]["recall"],
-                    report_dict_2[lbl]["f1-score"]]
+                     report_dict_2[lbl]["precision"],
+                     report_dict_2[lbl]["recall"],
+                     report_dict_2[lbl]["f1-score"]]
                     for lbl in labels2]
     df_report2 = pd.DataFrame(report_data2,
-                            columns=["Label", "Precision", "Recall", "F1-Score"])
+                              columns=["Label", "Precision", "Recall", "F1-Score"])
 
     fig_report2 = go.Figure()
     for col in ["Precision", "Recall", "F1-Score"]:
         fig_report2.add_trace(go.Bar(x=df_report2["Label"], y=df_report2[col], name=col))
     fig_report2.update_layout(barmode='group',
-                            title="Class Report Metrics of PhoBert + Softmax",
-                            xaxis_title="Label", yaxis_title="Score",
-                            yaxis=dict(range=[0,1.0]))
+                              title="Class Metrics: PhoBERT + Softmax",
+                              xaxis_title="Label", yaxis_title="Score",
+                              yaxis=dict(range=[0, 1.0]))
 
     # 4️⃣ Model & Data Comparison Tables
     df_model = pd.DataFrame(
@@ -109,7 +114,7 @@ with tab2:
         columns=["Preprocessing", "F1-Score"]
     )
 
-    # ==== LAYOUT RAO GỌN VỚI COLUMNS ====
+    # ==== CLEAN LAYOUT WITH COLUMNS ====
 
     # Row 1: Loss | F1
     col1, col2 = st.columns(2)
@@ -134,26 +139,26 @@ with tab2:
         st.markdown("**Data Preprocessing Comparison**")
         st.dataframe(df_data, use_container_width=True)
 
-# --- Tab 3: DEMO MÔ HÌNH ---
+# --- Tab 3: MODEL DEMO ---
 with tab3:
-    st.header("🧪 Vietnamese Named Entity Recognition")
+    st.header("🧪 Vietnamese Named Entity Recognition Demo")
 
-    text = st.text_input("Nhập văn bản tiếng Việt:", "Nguyễn Văn A đang làm việc tại Hà Nội")
+    text = st.text_input("Enter Vietnamese text:", "Nguyễn Văn A đang làm việc tại Hà Nội")
 
-    if st.button("Phân tích"):
+    if st.button("Analyze"):
         if not text.strip():
-            st.warning("Vui lòng nhập văn bản!")
+            st.warning("Please enter some text!")
         else:
             tokens, labels = predict_demo(text)
 
-            st.subheader("Thực thể được phát hiện")
+            st.subheader("Detected Entities")
             entities = [(tok, lab) for tok, lab in zip(tokens, labels) if lab != "O"]
 
             if entities:
                 for tok, lab in entities:
                     st.markdown(f"🔹 **{tok}** — *{lab}*")
             else:
-                st.info("Không phát hiện thực thể.")
+                st.info("No named entities detected.")
 
-        st.subheader("Highlight trong văn bản:")
+        st.subheader("Highlighted Text")
         st.markdown(render_html(tokens, labels), unsafe_allow_html=True)
