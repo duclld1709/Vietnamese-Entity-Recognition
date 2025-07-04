@@ -9,7 +9,7 @@ from results.output import training_log, report_dict, report_dict_2, model_compa
 st.set_page_config(page_title="Vietnamese NER", layout="wide")
 
 # ===== Main Title =====
-st.title("🔍 Vietnamese Named Entity Recognition Demo")
+st.title("🔍 Vietnamese Named Entity Recognition (NER) Application")
 
 # Tabs
 tab1, tab2, tab3 = st.tabs(["📊 Data Analysis", "📈 Training Results", "🧪 Model Demo"])
@@ -20,23 +20,28 @@ with tab1:
 
     # ==== Distribution of NER Label Frequency ====
     with col1:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq.png",
+                 caption="NER Label Frequency Distribution")
 
     # ==== Distribution of NER Label Frequency (Add crawled data) ====
     with col2:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq_add.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ner_freq_add.png",
+                 caption="NER Label Frequency (Extended with Crawled Data)")
 
     # ==== Distribution of the Number of Entities per Sentence (0 to 15+) ====
     with col1:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ent_dis.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/ent_dis.png",
+                 caption="Number of Entities per Sentence")
 
     # ==== Distribution of Sentence Lengths ====
     with col2:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/sent_len.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/sent_len.png",
+                 caption="Sentence Length Distribution")
 
     # ==== Distribution of Token Lengths ====
     with col1:
-        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/token_len.png")
+        st.image("https://raw.githubusercontent.com/duclld1709/vietnamese-ner/refs/heads/main/results/token_len.png",
+                 caption="Token Length Distribution")
 
 # --- Tab 2: TRAINING RESULTS ---
 with tab2:
@@ -136,6 +141,8 @@ with tab2:
 
 # --- Tab 3: MODEL DEMO ---
 with tab3:
+    st.header("🧪 Vietnamese Named Entity Recognition Demo")
+
     text = st.text_input("Enter Vietnamese text:", "Nguyễn Văn A đang làm việc tại Hà Nội")
 
     if st.button("Analyze"):
