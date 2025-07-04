@@ -1,6 +1,6 @@
 import wandb
 from tqdm import tqdm
-from src.evaluate import evaluate
+from evaluate import evaluate
 import torch
 
 def train_model(model, optimizer, configs, loaders):

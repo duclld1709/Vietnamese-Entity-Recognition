@@ -1,0 +1,349 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Model Demo
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: "Inter", sans-serif;
+    }
+  </style>
+ </head>
+ <body class="min-h-screen bg-gradient-to-br from-[#e07db7] via-[#e07db7]/40 to-[#f47a2f] flex items-center justify-center p-6">
+  <div class="max-w-6xl w-full rounded-xl flex overflow-hidden drop-shadow-lg bg-gradient-to-br from-[#f7f8fa] to-[#e9ebf0]">
+   <!-- Sidebar -->
+<aside class="w-48 flex flex-col bg-[#F0F0F5] border-r border-gray-200 select-none">
+  <nav class="flex flex-col mt-6 space-y-1 px-2">
+    <button id="homeBtn" class="flex items-center gap-3 text-xs font-semibold text-[#FF6A00] rounded-md py-3 px-4 border border-[#FF6A00] bg-white shadow-sm hover:bg-[#ff6a0040] transition" type="button">
+      <i class="fas fa-home text-sm"></i>
+      <span data-i18n="home">HOME</span>
+    </button>
+    <button id="historyBtn" class="flex items-center gap-3 text-xs font-semibold text-gray-700 rounded-md py-3 px-4 hover:bg-[#ff6a0040] hover:text-[#FF6A00] transition" type="button">
+      <i class="fas fa-clock text-sm"></i>
+      <span data-i18n="history">DETECT HISTORY</span>
+    </button>
+    <button id="statBtn" class="flex items-center gap-3 text-xs font-semibold text-gray-700 rounded-md py-3 px-4 hover:bg-[#ff6a0040] hover:text-[#FF6A00] transition" type="button">
+      <i class="fas fa-chart-bar text-sm"></i>
+      <span data-i18n="stat">STATISTICS</span>
+    </button>
+    <button id="settingSidebarBtn" class="flex items-center gap-3 text-xs font-semibold text-gray-700 rounded-md py-3 px-4 hover:bg-[#ff6a0040] hover:text-[#FF6A00] transition" type="button">
+      <i class="fas fa-sliders-h text-sm"></i>
+      <span data-i18n="settings">SETTINGS</span>
+    </button>
+  </nav>
+</aside>
+ <!-- Main content -->
+<main class="flex-1 flex flex-col p-6">
+  <!-- Topbar: Tabs + Search -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-0 mb-8">
+    <!-- Tabs as segmented control card -->
+    <div aria-label="Main navigation tabs" class="inline-flex rounded-lg bg-white shadow-sm border border-gray-300 overflow-hidden text-xs font-semibold text-gray-600" role="tablist">
+      <button aria-selected="false" class="px-4 py-2 flex items-center gap-1 hover:text-[#FF6A00] transition focus:outline-none" role="tab" tabindex="0" type="button">
+        <img alt="Data Analysis icon, a small colorful bar chart" class="w-4 h-4" height="16" src="https://storage.googleapis.com/a1aa/image/97104fd7-5bb0-41e8-f1d2-7860810595dd.jpg" width="16"/>
+        <span data-i18n="dataAnalysis">Data Analysis</span>
+      </button>
+      <button aria-selected="false" class="px-4 py-2 flex items-center gap-1 hover:text-[#FF6A00] transition focus:outline-none" role="tab" tabindex="-1" type="button">
+        <img alt="Training Results icon, a small line chart with upward trend" class="w-4 h-4" height="16" src="https://storage.googleapis.com/a1aa/image/ac9104af-fd5c-488d-8f07-2e00044563e3.jpg" width="16"/>
+        <span data-i18n="trainingResults">Training Results</span>
+      </button>
+      <button aria-selected="true" class="px-4 py-2 flex items-center gap-1 bg-[#FF6A00] text-white rounded-lg focus:outline-none" role="tab" tabindex="0" type="button">
+        <img alt="Model Demo icon, a small green pencil" class="w-4 h-4" height="16" src="https://storage.googleapis.com/a1aa/image/ee1b8981-47ae-4e2b-3171-3006c09b5080.jpg" width="16"/>
+        <span data-i18n="modelDemo">Model Demo</span>
+      </button>
+    </div>
+    <!-- Search bar on right -->
+    <form aria-label="Search form" class="w-full max-w-xs md:max-w-sm" onsubmit="event.preventDefault()">
+      <label class="sr-only" for="search">
+        Search
+      </label>
+      <div class="relative w-full">
+        <!-- Search icon or input here if needed -->
+      </div>
+    </form>
+  </div>
+
+  <!-- Input type tabs (ẩn khi ở trang Setting) -->
+  <div id="innerTabs" class="flex gap-6 w-full mb-6">
+    <button id="textTabBtn" class="flex-1 bg-white font-semibold text-sm py-3 rounded-xl border border-gray-300 shadow-sm hover:shadow-md transition text-center tab-btn active" type="button">
+      <span data-i18n="enterText">✍️ Enter text</span>
+    </button>
+    <button id="fileTabBtn" class="flex-1 bg-white font-semibold text-sm py-3 rounded-xl border border-gray-300 shadow-sm hover:shadow-md transition text-center tab-btn" type="button">
+      📄
+      <span class="font-bold" data-i18n="uploadFile">
+        Upload .txt or .docx file
+      </span>
+    </button>
+  </div>
+  <!-- Tab contents -->
+  <div id="tabContents" class="relative w-full flex-1">
+    <!-- Text input area -->
+    <form id="textForm" aria-label="Vietnamese text input form" class="w-full bg-white rounded-2xl p-6 shadow-sm border border-gray-200 tab-content transition-all duration-300" onsubmit="event.preventDefault()">
+      <label class="block text-xs font-normal text-gray-600 mb-2" for="vietnamese-text" data-i18n="enterTextLabel">
+        Enter Vietnamese text:
+      </label>
+      <textarea class="w-full rounded-[12px] border border-gray-300 bg-gray-50 text-gray-700 text-sm p-3 mb-2 resize-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF6A00] transition" id="vietnamese-text" maxlength="300" placeholder="Ví dụ: Nguyễn Văn A sinh sống tại TP.HCM" rows="5">Nguyễn Văn A đang làm việc tại Hà Nội</textarea>
+      <div aria-live="polite" class="flex justify-between items-center mb-4 text-xs text-gray-500 select-none">
+        <span id="charCount">
+          Characters: 38 / 300
+        </span>
+        <span id="wordCount">
+          Words: 7
+        </span>
+      </div>
+      <button class="inline-flex items-center gap-2 bg-[#FF6A00] text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-md hover:bg-[#e65a00] disabled:bg-[#ffb380] disabled:cursor-not-allowed transition" type="submit">
+        <i class="fas fa-brain"></i>
+        <span data-i18n="analyze">Analyze</span>
+      </button>
+      <div id="textResult" class="mt-4 text-green-700 font-semibold hidden"></div>
+    </form>
+    <!-- File upload area -->
+    <form id="fileForm" aria-label="File upload form" class="w-full bg-white rounded-2xl p-6 shadow-sm border border-gray-200 tab-content transition-all duration-300 absolute top-0 left-0 opacity-0 pointer-events-none" onsubmit="event.preventDefault()">
+      <label class="block text-xs font-normal text-gray-600 mb-2" for="file-upload" data-i18n="uploadFileLabel">
+        Upload .txt or .docx file:
+      </label>
+      <input id="file-upload" type="file" accept=".txt,.docx" class="mb-4 block"/>
+      <button class="inline-flex items-center gap-2 bg-[#FF6A00] text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-md hover:bg-[#e65a00] disabled:bg-[#ffb380] disabled:cursor-not-allowed transition" type="submit" id="analyzeFileBtn" disabled>
+        <i class="fas fa-brain"></i>
+        <span data-i18n="analyze">Analyze</span>
+      </button>
+      <div id="fileResult" class="mt-4 text-green-700 font-semibold hidden"></div>
+    </form>
+    <!-- Setting area (chỉ hiện khi vào Setting) -->
+    <form id="settingForm" class="w-full bg-white rounded-2xl p-6 shadow-sm border border-gray-200 tab-content transition-all duration-300 absolute top-0 left-0 opacity-0 pointer-events-none" onsubmit="event.preventDefault()">
+      <label class="block text-xs font-normal text-gray-600 mb-2" for="language-select" data-i18n="chooseLanguage">
+        Chọn ngôn ngữ / Select language:
+      </label>
+      <select id="language-select" class="w-full rounded-[12px] border border-gray-300 bg-gray-50 text-gray-700 text-sm p-3 mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF6A00] transition">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+        <option value="ja">日本語</option>
+      </select>
+      <button class="inline-flex items-center gap-2 bg-[#FF6A00] text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-md hover:bg-[#e65a00] transition" type="submit" id="confirmSettingBtn">
+        <i class="fas fa-check"></i>
+      </button>
+      <div id="settingResult" class="mt-4 text-green-700 font-semibold hidden"></div>
+    </form>
+  </div>
+</main>
+<script>
+const translations = {
+  en: {
+    home: "HOME",
+    history: "DETECT HISTORY",
+    stat: "STATISTICS",
+    settings: "SETTINGS",
+    dataAnalysis: "Data Analysis",
+    trainingResults: "Training Results",
+    modelDemo: "Model Demo",
+    enterText: "✍️ Enter text",
+    uploadFile: "Upload .txt or .docx file",
+    enterTextLabel: "Enter Vietnamese text:",
+    uploadFileLabel: "Upload .txt or .docx file:",
+    chooseLanguage: "Select language:",
+    confirm: "Confirm",
+    analyze: "Analyze"
+  },
+  vi: {
+    home: "TRANG CHỦ",
+    history: "LỊCH SỬ PHÁT HIỆN",
+    stat: "THỐNG KÊ",
+    settings: "CÀI ĐẶT",
+    dataAnalysis: "Phân tích dữ liệu",
+    trainingResults: "Kết quả huấn luyện",
+    modelDemo: "Demo mô hình",
+    enterText: "✍️ Nhập văn bản",
+    uploadFile: "Tải lên file .txt hoặc .docx",
+    enterTextLabel: "Nhập văn bản tiếng Việt:",
+    uploadFileLabel: "Tải lên file .txt hoặc .docx:",
+    chooseLanguage: "Chọn ngôn ngữ:",
+    confirm: "Xác nhận",
+    analyze: "Phân tích"
+  },
+  zh: {
+    home: "主页",
+    history: "检测历史",
+    stat: "统计",
+    settings: "设置",
+    dataAnalysis: "数据分析",
+    trainingResults: "训练结果",
+    modelDemo: "模型演示",
+    enterText: "✍️ 输入文本",
+    uploadFile: "上传 .txt 或 .docx 文件",
+    enterTextLabel: "输入越南语文本：",
+    uploadFileLabel: "上传 .txt 或 .docx 文件：",
+    chooseLanguage: "选择语言：",
+    confirm: "确认",
+    analyze: "分析"
+  },
+  ja: {
+    home: "ホーム",
+    history: "検出履歴",
+    stat: "統計",
+    settings: "設定",
+    dataAnalysis: "データ分析",
+    trainingResults: "トレーニング結果",
+    modelDemo: "モデルデモ",
+    enterText: "✍️ テキスト入力",
+    uploadFile: ".txt または .docx ファイルをアップロード",
+    enterTextLabel: "ベトナム語のテキストを入力：",
+    uploadFileLabel: ".txt または .docx ファイルをアップロード：",
+    chooseLanguage: "言語を選択：",
+    confirm: "確認",
+    analyze: "解析"
+  }
+};
+
+let currentLang = 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang][key]) {
+      el.textContent = translations[lang][key];
+    }
+  });
+}
+
+// Sidebar button logic
+const homeBtn = document.getElementById('homeBtn');
+const historyBtn = document.getElementById('historyBtn');
+const statBtn = document.getElementById('statBtn');
+const settingSidebarBtn = document.getElementById('settingSidebarBtn');
+const innerTabs = document.getElementById('innerTabs');
+const settingForm = document.getElementById('settingForm');
+const textForm = document.getElementById('textForm');
+const fileForm = document.getElementById('fileForm');
+
+function showMainTabs() {
+  innerTabs.style.display = '';
+  textForm.style.position = '';
+  fileForm.style.position = 'absolute';
+  settingForm.classList.add('opacity-0', 'pointer-events-none');
+  settingForm.classList.remove('opacity-100');
+  activateTab('text');
+}
+function showSettingTab() {
+  innerTabs.style.display = 'none';
+  textForm.classList.add('opacity-0', 'pointer-events-none');
+  fileForm.classList.add('opacity-0', 'pointer-events-none');
+  settingForm.style.position = '';
+  settingForm.classList.remove('opacity-0', 'pointer-events-none');
+  settingForm.classList.add('opacity-100');
+}
+
+// Sidebar events
+homeBtn.addEventListener('click', showMainTabs);
+historyBtn.addEventListener('click', showMainTabs);
+statBtn.addEventListener('click', showMainTabs);
+settingSidebarBtn.addEventListener('click', showSettingTab);
+
+// Language change logic
+document.getElementById('language-select').addEventListener('change', function() {
+  setLanguage(this.value);
+});
+document.getElementById('settingForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  setLanguage(document.getElementById('language-select').value);
+  document.getElementById('settingResult').textContent =
+    currentLang === 'vi' ? '✔️ Đã đổi ngôn ngữ!' :
+    currentLang === 'en' ? '✔️ Language changed!' :
+    currentLang === 'zh' ? '✔️ 语言已更改！' :
+    '✔️ 言語が変更されました！';
+  document.getElementById('settingResult').classList.remove('hidden');
+});
+
+// Tab switching logic
+const textTabBtn = document.getElementById('textTabBtn');
+const fileTabBtn = document.getElementById('fileTabBtn');
+
+function activateTab(tab) {
+  if (tab === 'text') {
+    textTabBtn.classList.add('active');
+    fileTabBtn.classList.remove('active');
+    textForm.classList.remove('opacity-0', 'pointer-events-none');
+    textForm.classList.add('opacity-100');
+    fileForm.classList.add('opacity-0', 'pointer-events-none');
+    fileForm.classList.remove('opacity-100');
+  } else {
+    fileTabBtn.classList.add('active');
+    textTabBtn.classList.remove('active');
+    fileForm.classList.remove('opacity-0', 'pointer-events-none');
+    fileForm.classList.add('opacity-100');
+    textForm.classList.add('opacity-0', 'pointer-events-none');
+    textForm.classList.remove('opacity-100');
+  }
+}
+textTabBtn.addEventListener('click', () => activateTab('text'));
+fileTabBtn.addEventListener('click', () => activateTab('file'));
+
+// Textarea character/word count
+const textarea = document.getElementById('vietnamese-text');
+const charCount = document.getElementById('charCount');
+const wordCount = document.getElementById('wordCount');
+textarea.addEventListener('input', () => {
+  charCount.textContent = `Characters: ${textarea.value.length} / 300`;
+  wordCount.textContent = `Words: ${textarea.value.trim().split(/\s+/).filter(Boolean).length}`;
+});
+
+// Analyze text
+textForm.addEventListener('submit', () => {
+  const result = document.getElementById('textResult');
+  result.textContent = 'Processing...';
+  result.classList.remove('hidden');
+
+  fetch('http://localhost:5000/predict', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: textarea.value })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.html_result) {
+      result.innerHTML = data.html_result;
+    } else {
+      result.textContent = 'No result.';
+    }
+  })
+  .catch(err => {
+    result.textContent = 'Error processing request.';
+  });
+});
+
+
+// File upload logic
+const fileInput = document.getElementById('file-upload');
+const analyzeFileBtn = document.getElementById('analyzeFileBtn');
+fileInput.addEventListener('change', () => {
+  analyzeFileBtn.disabled = !fileInput.files.length;
+});
+fileForm.addEventListener('submit', () => {
+  const file = fileInput.files[0];
+  const result = document.getElementById('fileResult');
+  if (file) {
+    result.textContent = `Đã tải lên và phân tích file: ${file.name}`;
+    result.classList.remove('hidden');
+  }
+});
+
+// Khởi tạo tab đầu tiên và ngôn ngữ mặc định
+activateTab('text');
+setLanguage(currentLang);
+</script>
+<style>
+  .tab-content {
+    transition: opacity 0.3s;
+  }
+  .tab-btn.active {
+    background: #FF6A00 !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px #ff6a0033;
+  }
+</style>
