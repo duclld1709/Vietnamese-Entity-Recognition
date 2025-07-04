@@ -1,26 +1,32 @@
-import streamlit as st
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 from predict import predict_demo
 from front import render_html
+import os
 
-st.title("Vietnamese Named Entity Recognition")
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
+CORS(app) 
+@app.route('/')
+def index():
+    return render_template('demo.html')
 
-text = st.text_input("Nhập văn bản tiếng Việt:", "Nguyễn Văn A đang làm việc tại Hà Nội")
-
-if st.button("Phân tích"):
-    if not text.strip():
-        st.warning("Vui lòng nhập văn bản!")
-    else:
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data = request.get_json()
+        print("Received data:", data)
+        text = data.get('text', '')
+        print("Text:", text)
+        if not text.strip():
+            return jsonify({'error': 'No text provided.'}), 400
         tokens, labels = predict_demo(text)
-
-        st.subheader(" Thực thể được phát hiện")
-        entities = [ (tok, lab) for tok, lab in zip(tokens, labels) if lab != "O"]
-
-        if entities:
-            for tok, lab in entities:
-                st.markdown(f"🔹 **{tok}** — *{lab}*")
-        
-        else:
-            st.info("Không phát hiện thực thể.")
-    
-    st.subheader("Highlight trong văn bản:")
-    st.markdown(render_html(tokens, labels), unsafe_allow_html=True)
+        print("Tokens:", tokens)
+        print("Labels:", labels)
+        html_result = render_html(tokens, labels)
+        print("HTML Result:", html_result)
+        return jsonify({'tokens': tokens, 'labels': labels, 'html_result': html_result})
+    except Exception as e:
+        print("Exception:", e)
+        return jsonify({'error': str(e)}), 500
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
