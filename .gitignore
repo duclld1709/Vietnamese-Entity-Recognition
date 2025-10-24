@@ -7,6 +7,7 @@ __pycache__/
 *.pth
 *.h5
 *.ckpt
+*.pdf
 
 # Dataset and results folders
 data/
@@ -19,3 +20,4 @@ logs/
 *.png
 *.jpg
 *.jpeg
+
