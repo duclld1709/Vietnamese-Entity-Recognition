@@ -44,4 +44,4 @@ jobs:
           # Commit và push
           git add .
           git commit -m "Auto-deploy from GitHub (binary files removed)" || echo "No changes to commit"
-          git push https://DucLai:${HF_TOKEN}@huggingface.co/spaces/DucLai/Vietnamese_NER HEAD
+          git push https://oauth2:${HF_TOKEN}@huggingface.co/spaces/DucLai/Vietnamese_NER HEAD
