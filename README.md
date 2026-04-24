@@ -16,6 +16,7 @@ A comprehensive Vietnamese Named Entity Recognition system using state-of-the-ar
 ## 🚀 Live Demo
 
 Try the interactive demo: **[Vietnamese NER Demo](https://huggingface.co/spaces/DucLai/Vietnamese_NER)**
+It may take a minute for the server to wake up.
 
 ![image](https://github.com/user-attachments/assets/ac6f0b96-52f2-4e47-b542-e908c02261c4)
 
