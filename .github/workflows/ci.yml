@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -e ".[dev]"
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Test
+        run: pytest
+
+  # Deploy to the Hugging Face Space only after tests pass on main
+  # (previously every push to main was deployed untested).
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git clone https://huggingface.co/spaces/DucLai/Vietnamese_NER space
+          # Binary files need Git LFS on the Hub, so images/PDFs and dev-only folders stay on GitHub.
+          rsync -av --delete --exclude '.git' --exclude '.gitattributes' --exclude 'data/' --exclude 'notebooks/' --exclude 'tests/' \
+            --exclude 'docs/' --exclude '*.png' --exclude '*.pdf' ./ space/
+          cd space
+          git add -A
+          git commit -m "Deploy ${GITHUB_SHA::7} from GitHub" || echo "No changes to commit"
+          git push https://DucLai:${HF_TOKEN}@huggingface.co/spaces/DucLai/Vietnamese_NER HEAD

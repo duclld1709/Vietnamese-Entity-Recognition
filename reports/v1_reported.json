@@ -1,0 +1,16 @@
+{
+  "source": "reports/v1_training.log (test split of the v1 run, best epoch 16)",
+  "metric": "token-level classification report over tag ids, including O; not entity-level",
+  "test_loss": 0.2967,
+  "token_macro_f1": 0.9087,
+  "per_tag": {
+    "O": {"precision": 1.00, "recall": 1.00, "f1": 1.00, "support": 51036},
+    "B-PER": {"precision": 0.99, "recall": 0.98, "f1": 0.99, "support": 1112},
+    "I-PER": {"precision": 0.97, "recall": 0.99, "f1": 0.98, "support": 506},
+    "B-ORG": {"precision": 0.86, "recall": 0.79, "f1": 0.82, "support": 180},
+    "I-ORG": {"precision": 0.84, "recall": 0.80, "f1": 0.82, "support": 291},
+    "B-LOC": {"precision": 0.89, "recall": 0.91, "f1": 0.90, "support": 939},
+    "I-LOC": {"precision": 0.87, "recall": 0.84, "f1": 0.86, "support": 428}
+  },
+  "note": "The v1 dashboard hard-coded a different report (e.g. B-ORG P/R 0.83/0.84) that does not match this log."
+}

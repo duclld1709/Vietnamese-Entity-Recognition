@@ -1,23 +1,9 @@
-# Python cache
 __pycache__/
-*.pyc
-*.pyo
-
-# Hugging Face binary/model outputs
-*.pth
-*.h5
-*.ckpt
-*.pdf
-
-# Dataset and results folders
-data/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+runs/
+wandb/
 logs/
-
-# Large files
-*.zip
-*.tar.gz
-*.mp4
-*.png
-*.jpg
-*.jpeg
-

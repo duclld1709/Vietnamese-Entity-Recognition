@@ -1,4 +1,10 @@
-__version__ = '0.7.2'
+"""Linear-chain CRF.
+
+Vendored from pytorch-crf 0.7.2 (https://github.com/kmkurn/pytorch-crf,
+MIT License, Copyright (c) 2017 Kemal Kurniawan) to avoid an unmaintained
+dependency. Only change: masks are converted to ``bool`` so the module works
+with current PyTorch, where ``torch.where`` rejects ``uint8`` conditions.
+"""
 
 from typing import List, Optional
 
@@ -88,10 +94,12 @@ class CRF(nn.Module):
             reduction is ``none``, ``()`` otherwise.
         """
         self._validate(emissions, tags=tags, mask=mask)
+        if mask is not None:
+            mask = mask.bool()
         if reduction not in ('none', 'sum', 'mean', 'token_mean'):
             raise ValueError(f'invalid reduction: {reduction}')
         if mask is None:
-            mask = torch.ones_like(tags, dtype=torch.uint8)
+            mask = torch.ones_like(tags, dtype=torch.bool)
 
         if self.batch_first:
             emissions = emissions.transpose(0, 1)
@@ -130,8 +138,10 @@ class CRF(nn.Module):
             List of list containing the best tag sequence for each batch.
         """
         self._validate(emissions, mask=mask)
+        if mask is not None:
+            mask = mask.bool()
         if mask is None:
-            mask = emissions.new_ones(emissions.shape[:2], dtype=torch.uint8)
+            mask = emissions.new_ones(emissions.shape[:2], dtype=torch.bool)
 
         if self.batch_first:
             emissions = emissions.transpose(0, 1)

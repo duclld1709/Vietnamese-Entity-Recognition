@@ -1,192 +1,174 @@
 ---
 title: Vietnamese NER Demo
-emoji: 🧠
+emoji: 🛡️
 colorFrom: indigo
 colorTo: yellow
 sdk: streamlit
 sdk_version: 1.46.1
-app_file: src/app.py
+app_file: app.py
 pinned: false
 ---
-# Vietnamese Named Entity Recognition (NER) 🧠
 
-A comprehensive Vietnamese Named Entity Recognition system using state-of-the-art deep learning models including PhoBERT, CRF, and ensemble methods.
+# 🛡️ Vietnamese NER & Personal-Data Anonymiser
 
+[![CI](https://github.com/duclld1709/Vietnamese-Entity-Recognition/actions/workflows/ci.yml/badge.svg)](https://github.com/duclld1709/Vietnamese-Entity-Recognition/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)
+![PhoBERT](https://img.shields.io/badge/PhoBERT-CRF-yellow)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## 🚀 Live Demo
+**Find and anonymise personal data in Vietnamese text, so documents can go to an LLM without exposing
+customers.** A PhoBERT-CRF model finds people, organisations and places. Validated rules catch phone
+numbers, citizen ID (CCCD/CMND) numbers, emails, bank accounts, tax codes, card numbers, licence plates
+and dates. The reversible anonymiser swaps each entity for a placeholder. You can send the text to any
+LLM and then put the real names back into its answer.
 
-Try the interactive demo: **[Vietnamese NER Demo](https://huggingface.co/spaces/DucLai/Vietnamese_NER)**
-It may take a minute for the server to wake up.
+🚀 **Live demo:** [huggingface.co/spaces/DucLai/Vietnamese_NER](https://huggingface.co/spaces/DucLai/Vietnamese_NER) (the free Space can take about a minute to wake up)
 
-![image](https://github.com/user-attachments/assets/ac6f0b96-52f2-4e47-b542-e908c02261c4)
-
-## 🔄 Project Workflow
-
-![Project Flowchart](https://github.com/user-attachments/assets/5b800180-d6c8-44f7-8622-ba188f6cd7be)
-
-## 🎯 Overview
-
-This project implements a robust Vietnamese Named Entity Recognition system that can identify and classify entities in Vietnamese text. The system combines multiple approaches including:
-
-- **PhoBERT-based embeddings** for contextual understanding
-- **Conditional Random Fields (CRF)** for sequence labeling
-- **Random Forest** with semantic embeddings
-- **Rule-based methods** for enhanced accuracy
-
-## 📂 Project Structure
-
-```
-VIETNAMESE_NER/
-│
-├── .github/workflows              
-│   └── main.yml                   # Auto deploy to Hugging Space
-│
-├── data/                          # Dataset files
-│   └── raw_data.csv               # Raw training data
-│
-├── notebooks/                      # Jupyter notebooks for experimentation
-│   ├── Duc_Notebook.ipynb         # CRF + RandomForest experiments
-│   ├── Softmax_PhoBERT.ipynb      # Softmax approach
-│   ├── Kien_Rule_base.ipynb       # Rule-based method with RF
-│   └── Kien_RF_lightgbm.ipynb     # RF with semantic embeddings
-│
-├── src/                           # Main source code
-│   ├── __init__.py
-│   ├── app.py                     # Streamlit web application
-│   ├── front.py                   # Highlight function
-│   ├── config.py                  # Project configuration
-│   ├── data_loader.py             # Data loading utilities
-│   ├── preprocessing.py           # Data preprocessing functions
-│   ├── model.py                   # Model architecture definitions
-│   ├── train.py                   # Training pipeline
-│   ├── evaluate.py                # Model evaluation
-│   └── predict.py                 # Inference utilities
-│
-├── models/                        # Saved model artifacts
-│   └── best_model.pt              # Best trained model weights
-│
-├── outputs/                       # Training outputs
-│   ├── output.log                 # Training logs (TensorBoard)
-│   └── figures/                   # Visualization plots
-│
-├── tests/                         # Unit tests (planned)
-│
-├── requirements.txt               # Python dependencies
-├── environment.yml                # Conda environment file
-├── README.md                      # Project documentation
-└── run.py                        # Main training script
+```text
+Input   Ông Nguyễn Văn Nam (FPT, Hà Nội), SĐT 0912.345.678, CCCD 001090012345, STK 0071 0012 34567.
+Tag     Ông [PER_1] ([ORG_1], [LOC_1]), SĐT [PHONE_1], CCCD [ID_NUMBER_1], STK [BANK_ACCOUNT_1].
+Mask    Ông N***** V** N** (F**, H* N**), SĐT 09**.***.*78, CCCD *********345, STK **** **** **567.
 ```
 
+## Why
 
-## 🏗️ Model Architecture
+Decree 13/2023/NĐ-CP on personal data protection makes Vietnamese companies responsible for personal
+data they pass to third parties, including LLM APIs. Off-the-shelf PII tools (Presidio, cloud DLP)
+handle English names and US formats. They miss "Nguyễn Văn Nam", `0912.345.678` and 12-digit CCCD
+numbers. This project combines a Vietnamese NER model with rules for Vietnamese identifier formats.
 
-The system uses a hybrid architecture combining the strengths of different approaches:
+## Features
 
-![Model Architecture](https://github.com/user-attachments/assets/82d243a2-42fa-4dad-b1af-8946767d4f44)
+- **Hybrid detection.** PhoBERT-CRF handles PER/ORG/LOC (MISC optional). Rules handle structured PII, with validation (mobile prefixes, CCCD province codes, Luhn check for cards, date ranges) and context keywords for ambiguous digit strings (`STK`, `MST`, `CMND`, …).
+- **Exact character offsets.** pyvi word segmentation is aligned back to the original string, so entities can be replaced in place. Input is NFC-normalised (macOS and PDF text often arrives decomposed).
+- **Three anonymisation strategies.** `tag` gives consistent, reversible placeholders (the same person always maps to `[PER_1]`). `mask` keeps text readable. `redact` is irreversible.
+- **Long documents.** Text is split into sentences, word sequences are chunked to fit PhoBERT's 256-token window, and sentences from all inputs are batched with length bucketing.
+- **Graceful degradation.** If the model can't load, the service keeps running in rules-only mode, reports `degraded` on `/health`, and attaches a warning to every response.
+- **Interfaces.** Python library, CLI, FastAPI service, Streamlit demo, Docker image.
+- **Honest evaluation.** Entity-level metrics on the v1 held-out test split, test duplicates removed from training, and an error taxonomy. Details below.
 
-### Core Components:
-- **PhoBERT-Base**: Generates contextual embeddings for Vietnamese text
-- **Linear + CRF Layer**: Handles sequence labeling with context awareness
-- **Softmax/Random Forest**: Provides single-label prediction capabilities
+## Quickstart
 
-## 📊 Dataset & Performance
-
-### Dataset: VLSP2016
-The model is trained on the VLSP2016 dataset extracted from Vietnamese news articles.
-
-#### Dataset Statistics:
-<table>
-  <tr>
-    <td><img src="https://github.com/user-attachments/assets/20116929-1556-44b2-86e9-086b72320f22" alt="Entity Frequency" width="600"/></td>
-    <td><img src="https://github.com/user-attachments/assets/9cafb068-bbda-4ee1-9fc9-bd4edded1438" alt="Entity Distribution" width="600"/></td>
-  </tr>
-  <tr>
-    <td><img src="https://github.com/user-attachments/assets/db9421c0-4e9c-4654-92d0-d924932384dc" alt="Token Length Distribution" width="600"/></td>
-    <td><img src="https://github.com/user-attachments/assets/70871bc5-ccb4-4186-9538-ac479c771415" alt="Sentence Length Distribution" width="600"/></td>
-  </tr>
-</table>
-
-
-### Model Performance:
-<table>
-  <tr>
-    <td>
-      <img src="https://github.com/user-attachments/assets/9fb24f3a-466c-46f1-94d2-bcb6f26abd72" alt="F1 Score" width="600"/>
-    </td>
-    <td>
-      <img src="https://github.com/user-attachments/assets/11b8080a-38d6-4ea2-b350-21361345fd1e" alt="Training Loss" width="600"/>
-    </td>
-  </tr>
-</table>
-
-![Results Comparison](https://github.com/user-attachments/assets/e2fecc2c-8b27-4f28-a174-41078b17567c)
-
-## 🛠️ Installation & Setup
-
-### Prerequisites
-- Python 3.10+
-- Conda (recommended)
-
-### Option 1: Using `requirements.txt`
 ```bash
-# Create and activate conda environment
-conda create --name vnner python=3.10
-conda activate vnner
+pip install -e ".[api,app]"
 
-# Install dependencies
-pip install -r requirements.txt
+vietner entities "Ông Nguyễn Văn Nam làm việc tại Hà Nội, SĐT 0912345678"
+vietner anonymize contract.txt --strategy tag --mapping mapping.json > contract.anon.txt
+vietner serve-api                       # http://localhost:8000/docs
+streamlit run app.py                    # demo UI
 ```
 
-### Option 2: Using `environment.yml`
+```python
+from vietner import VietNER, deanonymize
+
+ner = VietNER.from_checkpoint()  # models/best_epoch_16.pt + vinai/phobert-base
+safe = ner.anonymize("Chị Lê Thị Lan (0987654321) ở Đà Nẵng.", strategy="tag")
+reply = call_your_llm(safe.text)  # the LLM only ever sees [PER_1], [PHONE_1], [LOC_1]
+print(deanonymize(reply, safe.mapping))
+```
+
+Docker (CPU, PhoBERT baked into the image):
+
 ```bash
-# Create environment from yml file
-conda env create -f environment.yml
-conda activate vnner
+docker build -t vietner . && docker run -p 8000:8000 vietner
 ```
 
-## 🚀 Quick Start
+### REST API
 
-### Training the Model
+| Method | Path | Body | Returns |
+|---|---|---|---|
+| `POST` | `/v1/entities` | `{"texts": [...], "ner": true, "rules": true}` (≤ 64 texts) | entities with `label`, `text`, `start`, `end`, `score`, `source` |
+| `POST` | `/v1/anonymize` | `{"text": "...", "strategy": "tag", "labels": null}` | anonymised text, replacements, `mapping` |
+| `POST` | `/v1/deanonymize` | `{"text": "...", "mapping": {...}}` | restored text |
+| `GET` | `/health` | | `ok` / `degraded` (rules-only) |
+
+## Labels
+
+| Source | Labels |
+|---|---|
+| Model (VLSP 2016) | `PER`, `ORG`, `LOC` (and `MISC` with the 9-tag scheme) |
+| Rules | `PHONE`, `EMAIL`, `ID_NUMBER` (CCCD/CMND), `TAX_CODE`, `BANK_ACCOUNT`, `CREDIT_CARD`, `LICENSE_PLATE`, `DATE`, `URL` |
+
+When spans overlap, validated rule matches (score 0.85–0.99) win over model spans (0.8), then longer
+spans win. `TAX_CODE`, `BANK_ACCOUNT` and 9-digit `ID_NUMBER` require a context keyword before the
+number. Without one, a random 10-digit string would be flagged.
+
+## Model and evaluation
+
+The model is PhoBERT-base with a Linear-CRF head. Subword states are mean-pooled into one vector per
+word. Two training modes are provided:
+
+| Mode | What is trained | Checkpoint |
+|---|---|---|
+| `probe` (v1 recipe) | Linear-CRF head on frozen PhoBERT features | 24 KB head; `models/best_epoch_16.pt` |
+| `finetune` | PhoBERT + head end to end (AdamW, warmup, AMP) | full model |
+
 ```bash
-python run.py
+python -m training.evaluate --checkpoint models/best_epoch_16.pt --output-dir reports/v1_probe
+python -m training.train --mode probe    --output-dir runs/probe
+python -m training.train --mode finetune --output-dir runs/finetune --amp
 ```
 
-### Running the Streamlit App
+**Evaluation protocol.**
+- **Same test set as v1.** `--split v1` rebuilds v1's exact train/val/test partition. v1's dropped rows depend only on the tokenizer. This lets the published checkpoint and new models be scored on the same held-out sentences.
+- **No duplicate leakage.** VLSP contains repeated sentences, so sentences that also occur in test are removed from train and val.
+- **Entity-level metric.** An entity counts only if span and type both match (CoNLL/VLSP standard). It is cross-checked against `seqeval` in the tests.
+- **Error taxonomy.** Every mistake is classified as wrong type, wrong boundary, missed or spurious, and every wrong sentence is written to `errors.jsonl`.
+
+**About the v1 numbers.** v1 reported F1 = 0.91 as **token-level macro F1 including the `O` tag**.
+About 94% of tokens are `O`, which inflates that score, and the metric does not check whether entity
+boundaries are right. The v1 dashboard also hard-coded a per-class report that does not match the
+training log (kept in [`reports/v1_reported.json`](reports/v1_reported.json)). Entity-level results
+for the v1 checkpoint and the fine-tuned model will be published here after the evaluation runs. The
+Streamlit *Evaluation* tab reads them straight from `reports/*/metrics.json`, so nothing is typed in by
+hand.
+
+## Engineering audit of v1 → v2
+
+| v1 issue | Impact | v2 |
+|---|---|---|
+| PhoBERT and the head reloaded on **every** prediction | Several seconds per request | Model loaded once; batched inference |
+| No length handling; PhoBERT has 256 positions | Crash on long inputs | Sentence splitting + subword-aware chunking |
+| Sentences whose `@@` regrouping mismatched were silently dropped | Lost training data; `zip` truncation at inference | Per-word tokenisation guarantees one vector per word |
+| Token-level macro F1 incl. `O` | Inflated, boundary-blind metric | Entity-level P/R/F1 + error taxonomy |
+| Random split with duplicate sentences across splits | Test leakage | Same v1 test set, duplicates removed from train/val |
+| Hard-coded metrics in the dashboard (`results/output.py`) | Numbers not traceable to a run | UI reads generated `metrics.json` |
+| User text injected into HTML unescaped (`unsafe_allow_html`) | HTML/script injection in the demo | Escaped rendering, tested |
+| Deploy on every push to `main`, no tests | Broken code could ship | CI (ruff + 68 tests) gates the Space deploy |
+| `.pyc` files committed, README describing files that don't exist | Confusing repo | Cleaned |
+
+## Project structure
+
+```
+vietner/      text (segmentation + offsets) · encoder (PhoBERT word encoder) · models (CRF head)
+              pii (rules) · anonymize · pipeline · metrics · api · cli · render
+training/     data (VLSP loading, v1 split) · train (probe / finetune) · evaluate
+app.py        Streamlit demo / Hugging Face Space
+models/       best_epoch_16.pt (v1 probe head)
+reports/      v1 training log and reported numbers; evaluation outputs land here
+notebooks/    v1 experiments (CRF, softmax, random forest, rule-based)
+tests/        68 tests: offsets, PII rules, anonymiser, encoder parity with v1, real checkpoint, API, UI, training smoke
+```
+
+## Development
+
 ```bash
-python src/app.py
+pip install -e ".[dev]"
+pytest              # ~10 s on CPU, no model download (tiny random PhoBERT stand-in)
+ruff check . && ruff format --check .
 ```
 
-## 🧪 Experimental Approaches
+## Roadmap
 
-The project explores multiple methodologies:
+- [ ] Publish entity-level results: v1 probe vs fine-tuned PhoBERT vs zero-shot LLM (F1 · latency · cost per 1k sentences)
+- [ ] Coreference-aware placeholders ("ông Nam" → same `[PER_1]` as "Nguyễn Văn Nam")
+- [ ] Address detection (house number + street + ward), which VLSP's `LOC` does not cover
+- [ ] Out-of-domain test set (contracts, CVs, chat logs); VLSP is news text
+- [ ] ONNX export and quantisation for CPU serving
 
-1. **PhoBERT + CRF**: Sequential labeling with contextual embeddings
-2. **PhoBERT + Softmax**: Direct classification approach
-3. **Random Forest + Rule-based**: Traditional ML with linguistic rules
-4. **Random Forest + Semantic Embeddings**: Enhanced feature engineering
+## Acknowledgements
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is open source. Please check the repository for license details.
-
-## 🙏 Acknowledgments
-
-- VLSP2016 dataset providers
-- PhoBERT model creators
-- Hugging Face for hosting the demo
-
-## 📚 Additional Resources
-
-For better understanding of the project structure and technologies used:
-
-- [Understanding `__init__.py`](https://zetcode.com/python/init-file/)
-- [Markdown Basic Syntax](https://www.markdownguide.org/basic-syntax/#escaping-characters)
-- [Requirements.txt vs Environment.yml](https://www.reddit.com/r/learnpython/comments/xvlpdz/why_do_people_provide_a_requirementstxt_or/)
-
----
-
-**Happy NER-ing! 🎯**
+VLSP 2016 NER dataset · [PhoBERT](https://github.com/VinAIResearch/PhoBERT) (VinAI) ·
+[pyvi](https://github.com/trungtv/pyvi) · CRF layer vendored from
+[pytorch-crf](https://github.com/kmkurn/pytorch-crf) (MIT). v1 report: [`docs/report.pdf`](docs/report.pdf).
+See the [model card](docs/MODEL_CARD.md) for intended use and limitations.
