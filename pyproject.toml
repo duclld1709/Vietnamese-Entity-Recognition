@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vietner"
+version = "2.0.0"
+description = "Vietnamese NER (PhoBERT-CRF) and personal-data anonymisation: library, REST API and Streamlit demo."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Lai Le Dinh Duc" }]
+dependencies = [
+    "torch>=2.1",
+    "transformers>=4.40",
+    "pyvi>=0.1.1",
+    "pydantic>=2.5",
+    "scikit-learn>=1.3",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn[standard]>=0.27"]
+app = ["streamlit>=1.35", "pandas>=2.0"]
+train = ["pandas>=2.0", "wandb>=0.16"]
+dev = [
+    "vietner[api,app]",
+    "pandas>=2.0",
+    "pytest>=8.0",
+    "httpx>=0.27",
+    "seqeval>=1.2",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+vietner = "vietner.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["vietner*", "training*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["notebooks", "vietner/crf.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]
